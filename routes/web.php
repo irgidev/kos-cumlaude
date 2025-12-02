@@ -34,6 +34,17 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/rekap-laporan', [RekapController::class, 'index'])->name('rekap.index');
 });
 
+Route::middleware(['auth:web'])->group(function () {
+    
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    Route::resource('penghuni', PenghuniController::class);
+    Route::resource('kamar', KamarController::class);
+    Route::resource('fasilitas', FasilitasController::class);
+    
+    Route::resource('staf', App\Http\Controllers\StafController::class); 
+    
+});
 
 Route::middleware(['auth:penghuni'])->group(function () {
     
