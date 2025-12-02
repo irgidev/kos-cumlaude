@@ -33,7 +33,6 @@ class Penghuni extends Authenticatable
         return $this->hasOne(Pekerja::class, 'id_penghuni', 'id_penghuni');
     }
 
-    // RELASI BARU KE KAMAR
     public function kamar()
     {
         return $this->belongsTo(Kamar::class, 'no_kamar', 'no_kamar');

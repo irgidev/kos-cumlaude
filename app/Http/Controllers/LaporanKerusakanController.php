@@ -9,11 +9,10 @@ use App\Models\Staf;
 use App\Models\Fasilitas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // Gunakan Transaction
+use Illuminate\Support\Facades\DB;
 
 class LaporanKerusakanController extends Controller
 {
-    // ... Index dan Create tetap sama ... 
     public function index(Request $request)
     {
         $query = LaporanKerusakan::with(['penghuni', 'kamar', 'staf']);
@@ -35,7 +34,6 @@ class LaporanKerusakanController extends Controller
         return redirect()->route('laporan.index')->with('error', 'Staf tidak dapat membuat laporan.');
     }
 
-    // UPDATE STORE: OTOMATIS UBAH JADI RUSAK
     public function store(Request $request)
     {
         $request->validate([
@@ -51,7 +49,6 @@ class LaporanKerusakanController extends Controller
             if ($request->filled('id_fasilitas') && $request->id_fasilitas != 'lainnya') {
                 $fasilitas = Fasilitas::find($request->id_fasilitas);
                 
-                // UPDATE KONDISI FASILITAS JADI RUSAK
                 if($fasilitas) {
                     $fasilitas->update(['kondisi' => 'Rusak']);
                     $namaFasilitas = $fasilitas->nama_fasilitas;
@@ -79,7 +76,6 @@ class LaporanKerusakanController extends Controller
         return view('laporan_kerusakan.edit', compact('laporan', 'staf'));
     }
 
-    // UPDATE PROGRESS: JIKA SELESAI, FASILITAS JADI BAIK
     public function update(Request $request, $id)
     {
         $laporan = LaporanKerusakan::findOrFail($id);
@@ -87,7 +83,6 @@ class LaporanKerusakanController extends Controller
         DB::transaction(function () use ($request, $laporan) {
             $laporan->update($request->all());
 
-            // Jika status berubah jadi SELESAI, dan ada fasilitas terkait, ubah jadi BAIK
             if ($request->status_laporan == 'Selesai' && $laporan->id_fasilitas) {
                 $fasilitas = Fasilitas::find($laporan->id_fasilitas);
                 if($fasilitas) {

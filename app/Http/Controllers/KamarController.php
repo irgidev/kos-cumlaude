@@ -7,14 +7,12 @@ use Illuminate\Http\Request;
 
 class KamarController extends Controller
 {
-    // HARGA FIX KAMAR (Konstanta biar mudah diatur)
     const HARGA_STANDARD = 750000;
     const HARGA_VIP = 850000;
     const HARGA_VVIP = 1000000;
 
     public function index(Request $request)
     {
-        // Update: Load relasi 'penghuni' agar bisa ditampilkan namanya
         $query = Kamar::with('penghuni');
 
         if ($request->has('status') && $request->status != '') {
@@ -43,7 +41,6 @@ class KamarController extends Controller
             'status_ketersediaan' => 'required'
         ]);
 
-        // LOGIKA HARGA FIX
         $harga = 0;
         switch($request->tipe) {
             case 'Standard': $harga = self::HARGA_STANDARD; break;
@@ -54,7 +51,7 @@ class KamarController extends Controller
         Kamar::create([
             'no_kamar' => $request->no_kamar,
             'tipe' => $request->tipe,
-            'harga_sewa' => $harga, // Pakai harga fix, abaikan input user kalau ada
+            'harga_sewa' => $harga,
             'status_ketersediaan' => $request->status_ketersediaan
         ]);
 
@@ -71,8 +68,7 @@ class KamarController extends Controller
     {
         $kamar = Kamar::findOrFail($id);
         
-        // LOGIKA HARGA FIX SAAT EDIT
-        $harga = $kamar->harga_sewa; // Default harga lama
+        $harga = $kamar->harga_sewa;
         if($request->has('tipe')) {
             switch($request->tipe) {
                 case 'Standard': $harga = self::HARGA_STANDARD; break;

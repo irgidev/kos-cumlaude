@@ -21,10 +21,8 @@ class Kamar extends Model
         return $this->hasMany(Fasilitas::class, 'no_kamar', 'no_kamar');
     }
 
-    // RELASI BARU: Untuk mengetahui siapa penghuni kamar ini
     public function penghuni()
     {
-        // hasOne karena 1 kamar hanya ditempati 1 penghuni aktif (biasanya)
         return $this->hasOne(Penghuni::class, 'no_kamar', 'no_kamar')->where('status_keaktifan', 'Aktif');
     }
 }

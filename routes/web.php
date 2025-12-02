@@ -11,23 +11,19 @@ use App\Http\Controllers\FasilitasController;
 use App\Http\Controllers\RekapController;
 use Illuminate\Support\Facades\Auth;
 
-// --- GUEST ---
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-// === AREA KHUSUS STAF (ADMIN/TEKNISI) ===
 Route::middleware(['auth:web'])->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    // Master Data
     Route::resource('penghuni', PenghuniController::class);
     Route::resource('kamar', KamarController::class);
     Route::resource('fasilitas', FasilitasController::class);
     
-    // Transaksi & Laporan
     Route::resource('tagihan', TagihanController::class);
     
     Route::get('/laporan', [LaporanKerusakanController::class, 'index'])->name('laporan.index');
@@ -39,14 +35,11 @@ Route::middleware(['auth:web'])->group(function () {
 });
 
 
-// === AREA KHUSUS PENGHUNI ===
 Route::middleware(['auth:penghuni'])->group(function () {
     
-    // Dashboard Penghuni - UPDATE DATA FETCHING
     Route::get('/portal-penghuni', function() {
         $penghuni = Auth::guard('penghuni')->user();
         
-        // Ambil riwayat laporan milik penghuni ini
         $riwayatLaporan = App\Models\LaporanKerusakan::with(['kamar', 'staf'])
                             ->where('id_penghuni', $penghuni->id_penghuni)
                             ->orderBy('tanggal_lapor', 'desc')

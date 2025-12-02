@@ -87,7 +87,6 @@ class PenghuniController extends Controller
         return view('penghuni.edit', compact('penghuni', 'kamarKosong'));
     }
 
-// GANTI FUNGSI update() DI PENGHUNICONTROLLER DENGAN INI
     public function update(Request $request, $id)
     {
         $penghuni = Penghuni::findOrFail($id);
@@ -95,7 +94,6 @@ class PenghuniController extends Controller
         $kamarBaru = $request->no_kamar;
 
         DB::transaction(function () use ($penghuni, $request, $kamarLama, $kamarBaru) {
-            // Update data dasar
             $penghuni->update([
                 'nama_penghuni' => $request->nama_penghuni,
                 'no_telepon_penghuni' => $request->no_telepon_penghuni,
@@ -103,22 +101,17 @@ class PenghuniController extends Controller
                 'no_kamar' => $kamarBaru
             ]);
 
-            // Cek jika pindah kamar
             if ($kamarLama != $kamarBaru) {
-                // Kamar lama jadi Kosong
                 if ($kamarLama) {
                     Kamar::where('no_kamar', $kamarLama)->update(['status_ketersediaan' => 'Kosong']);
                 }
-                // Kamar baru jadi Terisi
                 if ($kamarBaru) {
                     Kamar::where('no_kamar', $kamarBaru)->update(['status_ketersediaan' => 'Terisi']);
                 }
             }
             
-            // Jika status penghuni jadi Non-Aktif, kamar otomatis Kosong
             if ($request->status_keaktifan == 'Non-Aktif') {
                  Kamar::where('no_kamar', $kamarBaru)->update(['status_ketersediaan' => 'Kosong']);
-                 // Opsional: set no_kamar di tabel penghuni jadi NULL jika keluar kos
             }
         });
 
