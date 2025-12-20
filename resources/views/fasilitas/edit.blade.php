@@ -10,7 +10,22 @@
         
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2">Nama Fasilitas</label>
-            <input type="text" name="nama_fasilitas" value="{{ $fasilitas->nama_fasilitas }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <select name="nama_fasilitas" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                <option value="">-- Pilih Jenis Fasilitas --</option>
+                @php
+                    $listFasilitas = [
+                        'Kasur', 'Lemari', 'Meja', 'Kursi', 'Kipas Angin', 
+                        'AC', 'TV', 'Kulkas', 'Water Heater', 'Sofa', 
+                        'Cermin', 'Gorden', 'Lampu', 'Rak Sepatu', 'Jemuran Handuk'
+                    ];
+                @endphp
+                
+                @foreach($listFasilitas as $item)
+                    <option value="{{ $item }}" {{ $fasilitas->nama_fasilitas == $item ? 'selected' : '' }}>
+                        {{ $item }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         <div class="mb-4">
